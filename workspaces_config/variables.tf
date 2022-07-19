@@ -5,5 +5,5 @@ variable "account_id" {
 
 variable "bucket_name" {
   type    = string
-  default = "scalr_pcfg_test123"
+  default = "scalrpcfgtest123"
 }

@@ -87,25 +87,29 @@ resource "aws_iam_user_policy" "ak" {
   name = "access_keys_test"
   user = aws_iam_user.access_keys_test.name
 
-  policy = <<EOF
-{
-  "Version": "2022-07-19",
-  "Statement": [
-    {
-      "Action": [
-        "s3:GetObject",
-        "s3:PutObject",
-        "s3:DeleteObject"
-      ],
-      "Effect": "Allow",
-      "Resource": [
-        "arn:aws:s3:::${var.bucket_name}/obj3",
-        "arn:aws:s3:::${var.bucket_name}/obj4",
-      ]
-    }
-  ]
-}
-EOF
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Action" : [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ],
+        "Effect" : "Allow",
+        "Resource" : "arn:aws:s3:::${var.bucket_name}/obj3"
+      },
+      {
+        "Action" : [
+          "s3:GetObject",
+          "s3:PutObject",
+          "s3:DeleteObject"
+        ],
+        "Effect" : "Allow",
+        "Resource" : "arn:aws:s3:::${var.bucket_name}/obj4"
+      }
+    ]
+  })
 }
 
 # ------------- provider configuration --------------
@@ -138,13 +142,15 @@ data "scalr_vcs_provider" "test" {
   account_id = var.account_id
 }
 
-resource "scalr_variable" "bucket_name" {
-  key           = "bucket_name"
-  value = var.bucket_name
-  category     = "terraform"
-  environment_id = scalr_environment.test.id
-}
 
+resource "aws_s3_bucket" "b" {
+  bucket = var.bucket_name
+  acl    = "private"
+
+  tags = {
+    Name = "aws_pcfg_test"
+  }
+}
 
 resource "scalr_workspace" "rd_v3" {
   name            = "workspace-pcfg-rd_v3"
@@ -152,14 +158,22 @@ resource "scalr_workspace" "rd_v3" {
   auto_apply      = false
   operations      = false
   vcs_provider_id = data.scalr_vcs_provider.test.id
+  working_directory = "ws1_role_delegation_aws_v3"
   vcs_repo {
-    identifier = "DayS1eeper/provider_configuration_aws_profiles_test/ws1_role_delegation_aws_v3"
+    identifier = "DayS1eeper/provider_configuration_aws_profiles_test"
     branch     = "master"
   }
 
   provider_configuration {
     id = scalr_provider_configuration.rd.id
   }
+}
+resource "scalr_variable" "bucket_name_rd_v3" {
+  key            = "bucket_name"
+  value          = var.bucket_name
+  category       = "terraform"
+  environment_id = scalr_environment.test.id
+  workspace_id = scalr_workspace.rd_v3.id
 }
 resource "scalr_workspace" "rd_v4" {
   name            = "workspace-pcfg-rd_v4"
@@ -167,8 +181,9 @@ resource "scalr_workspace" "rd_v4" {
   auto_apply      = false
   operations      = false
   vcs_provider_id = data.scalr_vcs_provider.test.id
+  working_directory = "ws2_role_delegation_aws_v4"
   vcs_repo {
-    identifier = "DayS1eeper/provider_configuration_aws_profiles_test/ws2_role_delegation_aws_v4"
+    identifier = "DayS1eeper/provider_configuration_aws_profiles_test"
     branch     = "master"
   }
 
@@ -176,15 +191,22 @@ resource "scalr_workspace" "rd_v4" {
     id = scalr_provider_configuration.rd.id
   }
 }
-
+resource "scalr_variable" "bucket_name_rd_v4" {
+  key            = "bucket_name"
+  value          = var.bucket_name
+  category       = "terraform"
+  environment_id = scalr_environment.test.id
+  workspace_id = scalr_workspace.rd_v4.id
+}
 resource "scalr_workspace" "ak_v3" {
   name            = "workspace-pcfg-ak_v3"
   environment_id  = scalr_environment.test.id
   auto_apply      = false
   operations      = false
   vcs_provider_id = data.scalr_vcs_provider.test.id
+  working_directory = "ws3_access_keys_aws_v3"
   vcs_repo {
-    identifier = "DayS1eeper/provider_configuration_aws_profiles_test/ws3_access_keys_aws_v3"
+    identifier = "DayS1eeper/provider_configuration_aws_profiles_test"
     branch     = "master"
   }
 
@@ -192,18 +214,34 @@ resource "scalr_workspace" "ak_v3" {
     id = scalr_provider_configuration.ak.id
   }
 }
-resource "scalr_workspace" "ac_v3" {
+resource "scalr_variable" "bucket_name_ak_v3" {
+  key            = "bucket_name"
+  value          = var.bucket_name
+  category       = "terraform"
+  environment_id = scalr_environment.test.id
+  workspace_id = scalr_workspace.ak_v3.id
+}
+
+resource "scalr_workspace" "ac_v4" {
   name            = "workspace-pcfg-ak_v4"
   environment_id  = scalr_environment.test.id
   auto_apply      = false
   operations      = false
   vcs_provider_id = data.scalr_vcs_provider.test.id
+  working_directory = "ws4_access_keys_aws_v4"
   vcs_repo {
-    identifier = "DayS1eeper/provider_configuration_aws_profiles_test/ws4_access_keys_aws_v4"
+    identifier = "DayS1eeper/provider_configuration_aws_profiles_test"
     branch     = "master"
   }
 
   provider_configuration {
     id = scalr_provider_configuration.ak.id
   }
+}
+resource "scalr_variable" "bucket_name_ac_v4" {
+  key            = "bucket_name"
+  value          = var.bucket_name
+  category       = "terraform"
+  environment_id = scalr_environment.test.id
+  workspace_id = scalr_workspace.ac_v4.id
 }
