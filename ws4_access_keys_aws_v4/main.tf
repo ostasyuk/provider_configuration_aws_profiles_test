@@ -10,6 +10,9 @@ terraform {
 variable "bucket_name" {
   type=string
 }
+provider "aws" {
+  region = "us-east-1"
+}
 resource aws_s3_bucket_object "obj1" {
   bucket = var.bucket_name
   key    = "obj4"
