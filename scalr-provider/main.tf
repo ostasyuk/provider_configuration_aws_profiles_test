@@ -24,6 +24,7 @@ variable "scalr_hostname" {
   type = string
 }
 
+
 resource "scalr_provider_configuration" "scalr" {
   name                   = "scalrpcfg"
   account_id             = var.account_id
@@ -39,9 +40,13 @@ resource "scalr_environment" "scalrpcfgtest" {
   account_id              = var.account_id
   cost_estimation_enabled = false
 }
-data "scalr_vcs_provider" "test" {
-  name       = "pcfg_test"
+
+resource "scalr_vcs_provider" "vcs" {
+  name = "git-aprrr"
   account_id = var.account_id
+  # environment_id = local.environment_id
+  vcs_type = "github"
+  token = "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"
 }
 
 resource "scalr_workspace" "scalrpcfgtest" {
@@ -49,10 +54,11 @@ resource "scalr_workspace" "scalrpcfgtest" {
   environment_id    = scalr_environment.scalrpcfgtest.id
   auto_apply        = false
   operations        = false
-  vcs_provider_id   = data.scalr_vcs_provider.test.id
+  vcs_provider_id   = scalr_vcs_provider.vcs.id
   working_directory = "scalr_pcfg_create_workspace"
   vcs_repo {
-    identifier = "DayS1eeper/scalr_terraform_provider_configuration_samples"
+    identifier = "ostasyuk/test-github-app"
+    path  = "null"
     branch     = "master"
   }
 
