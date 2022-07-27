@@ -1,4 +1,4 @@
-provider scalr {}
+provider "scalr" { }
 
 resource "null_resource" "env_varstimeo" {
   count = 3
