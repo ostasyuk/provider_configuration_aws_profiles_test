@@ -61,6 +61,7 @@ resource "scalr_workspace" "scalrpcfgtest" {
     path  = "null"
     branch     = "master"
   }
+}
 
 #   provider_configuration {
 #     id = scalr_provider_configuration.scalr.id
