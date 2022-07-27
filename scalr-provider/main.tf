@@ -25,16 +25,16 @@ variable "scalr_hostname" {
 }
 
 
-# resource "scalr_provider_configuration" "scalr" {
-#   name                   = "scalrpcfg"
-#   account_id             = var.account_id
-#   export_shell_variables = false
-#   environments           = ["*"]
-#   scalr {
-#     token    = var.scalr_token
-#     hostname = var.scalr_hostname
-#   }
-# }
+resource "scalr_provider_configuration" "scalr" {
+  name                   = "scalrpcfg"
+  account_id             = var.account_id
+  export_shell_variables = false
+  environments           = ["*"]
+  scalr {
+    token    = var.scalr_token
+    hostname = var.scalr_hostname
+  }
+}
 resource "scalr_environment" "scalrpcfgtest" {
   name                    = "pcfg-test-${var.prefix}"
   account_id              = var.account_id
@@ -66,26 +66,27 @@ resource "scalr_workspace" "scalrpcfgtest" {
     id = scalr_provider_configuration.scalr.id
   }
 }
-# resource "scalr_variable" "prefix" {
-#   key            = "prefix"
-#   value          = "${var.prefix}_slave"
-#   category       = "terraform"
-#   environment_id = scalr_environment.scalrpcfgtest.id
-#   workspace_id   = scalr_workspace.scalrpcfgtest.id
-# }
 
-# resource "scalr_variable" "scalr_token" {
-#   key            = "scalr_token"
-#   value          = var.scalr_token
-#   category       = "terraform"
-#   environment_id = scalr_environment.scalrpcfgtest.id
-#   workspace_id   = scalr_workspace.scalrpcfgtest.id
-# }
+resource "scalr_variable" "prefix" {
+  key            = "prefix"
+  value          = "${var.prefix}_slave"
+  category       = "terraform"
+  environment_id = scalr_environment.scalrpcfgtest.id
+  workspace_id   = scalr_workspace.scalrpcfgtest.id
+}
 
-# resource "scalr_variable" "scalr_hostname" {
-#   key            = "scalr_hostname"
-#   value          = var.scalr_hostname
-#   category       = "terraform"
-#   environment_id = scalr_environment.scalrpcfgtest.id
-#   workspace_id   = scalr_workspace.scalrpcfgtest.id
-# }
+resource "scalr_variable" "scalr_token" {
+  key            = "scalr_token"
+  value          = var.scalr_token
+  category       = "terraform"
+  environment_id = scalr_environment.scalrpcfgtest.id
+  workspace_id   = scalr_workspace.scalrpcfgtest.id
+}
+
+resource "scalr_variable" "scalr_hostname" {
+  key            = "scalr_hostname"
+  value          = var.scalr_hostname
+  category       = "terraform"
+  environment_id = scalr_environment.scalrpcfgtest.id
+  workspace_id   = scalr_workspace.scalrpcfgtest.id
+}
